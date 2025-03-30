@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -187,7 +185,6 @@ class GeneratorPage extends StatelessWidget {
   }
 }
 
-// ...
 
 class BigCard extends StatelessWidget {
   const BigCard({
