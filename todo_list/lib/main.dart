@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -62,11 +64,34 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisCount: 2, // for this app -> 2
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
+            childAspectRatio: 2,
             ), 
 
           itemBuilder: (context, index){
             // builds each individual note card
-            return NoteCard(noteText: "Note ${index + 1}",);
+            return Dismissible(
+              // Dismissible ? : Give the slide behavior
+
+              key: ValueKey(notes[index]), // passing a unique key to each item
+              direction: DismissDirection.horizontal, //swiping both left or right works fine 
+              
+
+              onDismissed: (Direction){
+                setState(() {
+                  notes.removeAt(index); // deletes the note
+                });
+              },
+
+              background: Container(
+                
+                color: Colors.red,
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.only(right: 20),
+                child: const Icon(Icons.delete, color: Colors.white,),
+              ),
+
+              child: NoteCard(noteText: notes[index],)
+              );
           }
           ),
       ),
@@ -102,14 +127,34 @@ class NoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // each note appears with a clean card with text in it
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.deepPurple[100],
-        borderRadius: BorderRadius.circular(12),
+    return SizedBox.expand( //fills the entire grid tile
+      child: Container(
+        // each note appears with a clean card with text in it
+        height: 120,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.deepPurple[100],
+          borderRadius: BorderRadius.circular(12),
+        ),
+      
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+      
+            Flexible(
+              child: Text(
+                noteText,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                softWrap: true,
+                style: TextStyle(fontSize: 16),
+                ),
+            )
+            
+          ],
+        ),
+        
       ),
-      child: Text(noteText),
     );
   }
 } 
