@@ -90,7 +90,27 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: const Icon(Icons.delete, color: Colors.white,),
               ),
 
-              child: NoteCard(noteText: notes[index],)
+              child: GestureDetector(
+                onTap: () async {
+
+                  final updatedNote = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NoteEditorPage(initialText: notes[index],)
+                      )
+                  );
+
+                  if (updatedNote?.isNotEmpty == true){
+                    setState(() {
+                      notes[index] == updatedNote!;
+                    });
+                  }
+
+                },
+
+                child: NoteCard(noteText: notes[index],)
+                
+                )
               );
           }
           ),
@@ -123,57 +143,78 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class NoteCard extends StatelessWidget {
   final String noteText;
-  const NoteCard({super.key, required this.noteText});
+  final VoidCallback? onTap;
+  
+  const NoteCard({
+    super.key, 
+    required this.noteText,
+    this.onTap
+    });
+
+  
 
   @override
   Widget build(BuildContext context) {
     return SizedBox.expand( //fills the entire grid tile
-      child: Container(
-        // each note appears with a clean card with text in it
-        height: 120,
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.deepPurple[100],
-          borderRadius: BorderRadius.circular(12),
-        ),
-      
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-      
-            Flexible(
-              child: Text(
-                noteText,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                softWrap: true,
-                style: TextStyle(fontSize: 16),
-                ),
-            )
-            
-          ],
-        ),
+      child: GestureDetector(
+        onTap: onTap, //ontap is used from constuctor added above as a final variable
+        child: Container(
+          // each note appears with a clean card with text in it
+          height: 120,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.deepPurple[100],
+            borderRadius: BorderRadius.circular(12),
+          ),
         
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+        
+              Flexible(
+                child: Text(
+                  noteText,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
+                  style: TextStyle(fontSize: 16),
+                  ),
+              )
+              
+            ],
+          ),
+          
+        ),
       ),
     );
   }
 } 
 
 class NoteEditorPage extends StatefulWidget{
-  const NoteEditorPage({super.key});
+  final String? initialText;
+  const NoteEditorPage({
+    super.key,
+    this.initialText, // this allows us to pass in existing text when Editing notes
+    });
 
   @override
   State<NoteEditorPage> createState() => _NoteEditorPageState();
 }
 
 class _NoteEditorPageState extends State<NoteEditorPage>{
+  late TextEditingController _controller;
   String noteText = "";
 
   @override
+  void initState(){
+    super.initState();
+    _controller = TextEditingController(text: widget.initialText ?? "");
+  }
+
 Widget build(BuildContext context) {
   return WillPopScope(
     onWillPop: () async {
-      Navigator.pop(context, noteText.trim());
+      Navigator.pop(context, _controller.text.trim());
       return true;
     },
     child: Scaffold(
@@ -184,6 +225,7 @@ Widget build(BuildContext context) {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: TextField(
+          controller: _controller,
           autofocus: true,
           maxLines: null,
           onChanged: (value) {
