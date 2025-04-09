@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -35,7 +37,30 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<String> notes = [];
 
+  void loadNotes() async {
+
+    final prefs = await SharedPreferences.getInstance();
+    final savedNotes = prefs.getStringList('notes') ?? [];
+
+    setState(() {
+      notes = savedNotes;
+    });
+  }
+
+  void saveNotes() async {
+
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setStringList('notes', notes);
+
+  }
+
   @override
+  void initState() {
+  super.initState();
+  loadNotes();
+  }
+
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -80,6 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 setState(() {
                   notes.removeAt(index); // deletes the note
                 });
+                saveNotes();
               },
 
               background: Container(
@@ -131,6 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
             setState(() {
               notes.add(newNote!);
             });
+            saveNotes();
           }
         },
         tooltip: "New Note",
