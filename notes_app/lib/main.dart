@@ -55,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
     loadNotes();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -217,6 +218,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
     _controller = TextEditingController(text: widget.initialText ?? "");
   }
 
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
