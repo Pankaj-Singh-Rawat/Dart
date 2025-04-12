@@ -59,15 +59,80 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.menu),
-          onPressed: () {
-            // open menu drawer
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              tooltip: "Menu",
+            );
           },
-          tooltip: "Menu",
         ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
+      ),
+
+      drawer: Container(
+        constraints: BoxConstraints(
+        maxWidth: MediaQuery.of(context).size.width * 0.55,
+        ),
+         // You can reduce this further (try 200 or even 180)
+        child: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.deepPurple[200],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: const [
+                    Text(
+                      "Notes App",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      "Your personal note space ✨",
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.notes),
+                title: Text("All Notes"),
+                onTap: () {},
+              ),
+              ListTile(
+                leading: Icon(Icons.favorite),
+                title: Text("Favourites"),
+                onTap: () {},
+              ),
+              ListTile(
+                leading: Icon(Icons.star),
+                title: Text("Starred"),
+                onTap: () {},
+              ),
+              ListTile(
+                leading: Icon(Icons.delete),
+                title: Text("Recently Deleted"),
+                onTap: () {},
+              ),
+            ],
+          ),
+        ),
       ),
 
       //Main App Body that will show Notes will come up Here
