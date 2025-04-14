@@ -23,6 +23,13 @@ class MyApp extends StatelessWidget {
   }
 }
 
+enum NoteSection {
+  all,
+  favourites,
+  starred,
+  deleted,
+}
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.title});
 
@@ -34,6 +41,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<String> notes = [];
+
+  NoteSection currentSection = NoteSection.all;
 
   void loadNotes() async {
     final prefs = await SharedPreferences.getInstance();
@@ -53,6 +62,20 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     loadNotes();
+  }
+
+  List<String> get filteredNotes {
+    switch (currentSection) {
+      case NoteSection.favourites:
+        return notes.where((note) => note.startsWith('❤️')).toList();
+      case NoteSection.starred:
+        return notes.where((note) => note.startsWith('⭐')).toList();
+      case NoteSection.deleted:
+        return []; // Later, we’ll handle deleted notes
+      case NoteSection.all:
+      default:
+        return notes;
+    }
   }
 
   @override
@@ -76,9 +99,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
       drawer: Container(
         constraints: BoxConstraints(
-        maxWidth: MediaQuery.of(context).size.width * 0.55,
+          maxWidth: MediaQuery.of(context).size.width * 0.55,
         ),
-         // You can reduce this further (try 200 or even 180)
+        // You can reduce this further (try 200 or even 180)
         child: Drawer(
           child: ListView(
             padding: EdgeInsets.zero,
@@ -113,22 +136,38 @@ class _HomeScreenState extends State<HomeScreen> {
               ListTile(
                 leading: Icon(Icons.notes),
                 title: Text("All Notes"),
-                onTap: () {},
+                onTap: () {
+                  setState(() {
+                    currentSection = NoteSection.all;
+                  });
+                },
               ),
               ListTile(
                 leading: Icon(Icons.favorite),
                 title: Text("Favourites"),
-                onTap: () {},
+                onTap: () {
+                  setState(() {
+                    currentSection = NoteSection.favourites;
+                  });
+                },
               ),
               ListTile(
                 leading: Icon(Icons.star),
                 title: Text("Starred"),
-                onTap: () {},
+                onTap: () {
+                  setState(() {
+                    currentSection = NoteSection.starred;
+                  });
+                },
               ),
               ListTile(
                 leading: Icon(Icons.delete),
                 title: Text("Recently Deleted"),
-                onTap: () {},
+                onTap: () {
+                  setState(() {
+                    currentSection = NoteSection.deleted;
+                  });
+                },
               ),
             ],
           ),
@@ -140,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: GridView.builder(
-            itemCount: notes.length,
+            itemCount: filteredNotes.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               //defines how many cards(to write notes) will come in a row
               crossAxisCount: 2, // for this app -> 2
@@ -190,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
                       },
                       child: NoteCard(
-                        noteText: notes[index],
+                        noteText: filteredNotes[index],
                       )));
             }),
       ),
