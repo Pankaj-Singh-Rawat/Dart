@@ -73,8 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case NoteSection.deleted:
         return []; // Later, we’ll handle deleted notes
       case NoteSection.all:
-      default:
-        return notes;
+      return notes;
     }
   }
 
@@ -197,6 +196,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   direction: DismissDirection
                       .horizontal, //swiping both left or right works fine
 
+                  // ignore: non_constant_identifier_names
                   onDismissed: (Direction) {
                     setState(() {
                       notes.removeAt(index); // deletes the note
