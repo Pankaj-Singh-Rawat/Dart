@@ -66,3 +66,14 @@ cd notes_app
 │   └── (platforms)/    # Native configurations (Android, iOS, Web, etc.)
 └── README.md           # Workspace documentation
 ```
+## 🧪 Testing
+To ensure the stability of the apps, you can run the built-in widget tests:
+```text
+cd namer_app && flutter test
+cd ../notes_app && flutter test
+```
+
+👤 Author
+Pankaj Singh Rawat
+
+ - GitHub: @Pankaj-Singh-Rawat
